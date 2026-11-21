@@ -93,6 +93,48 @@ public static class SvgSecurityValidatorTests
         Assert.NotNull(reason);
     }
 
+
+    [Fact]
+    public static async Task Render_CssEscapedExternalUrl_DoesNotMakeHttpRequest()
+    {
+        // Exercise the actual SkiaEncoder SVG rendering path against a loopback-only listener.
+        // The listener is deliberately local: this test must never contact an external host.
+        using var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+        listener.Start();
+        var endpoint = (System.Net.IPEndPoint)listener.LocalEndpoint;
+        using var timeout = new System.Threading.CancellationTokenSource(System.TimeSpan.FromSeconds(2));
+        var acceptTask = listener.AcceptTcpClientAsync(timeout.Token).AsTask();
+
+        var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' style='fill:u\\\\72 l(http://127.0.0.1:{endpoint.Port}/remote.svg#paint)'/></svg>";
+        var path = WriteTemp(svg);
+        try
+        {
+            var encoder = new SkiaEncoder(null!, null!);
+            var method = typeof(SkiaEncoder).GetMethod("GetBitmapFromSvg", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotNull(method);
+
+            using var bitmap = (SkiaSharp.SKBitmap?)method!.Invoke(encoder, new object[] { path });
+            Assert.NotNull(bitmap);
+
+            var requestObserved = false;
+            try
+            {
+                using var client = await acceptTask;
+                requestObserved = true;
+            }
+            catch (System.OperationCanceledException)
+            {
+                // No connection arrived during the bounded observation window.
+            }
+
+            Assert.False(requestObserved, "The SVG renderer made an HTTP request for a CSS-escaped external URL.");
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     private static string WriteTemp(string svg)
     {
         var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
