@@ -105,7 +105,7 @@ public static class SvgSecurityValidatorTests
         using var timeout = new System.Threading.CancellationTokenSource(System.TimeSpan.FromSeconds(2));
         var acceptTask = listener.AcceptTcpClientAsync(timeout.Token).AsTask();
 
-        var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' style='fill:u\\\\72 l(http://127.0.0.1:{endpoint.Port}/remote.svg#paint)'/></svg>";
+        var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' style='fill:u\\72 l(http://127.0.0.1:{endpoint.Port}/remote.svg#paint)'/></svg>";
         var path = WriteTemp(svg);
         try
         {
