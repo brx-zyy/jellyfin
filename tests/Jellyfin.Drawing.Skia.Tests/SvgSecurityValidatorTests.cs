@@ -32,7 +32,7 @@ public static class SvgSecurityValidatorTests
         "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='16' height='16'><image xlink:href='data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20xmlns%3Axlink%3D%27http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%27%3E%3Cimage%20xlink%3Ahref%3D%27file%3A%2F%2F%2Fetc%2Fpasswd%27%2F%3E%3C%2Fsvg%3E' width='16' height='16'/></svg>",
         // CSS escape for the 'r' in url: CSS tokenizes u\\72 l(...) as url(...),
         // while a literal substring scan for url( does not recognize it.
-        "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' style='fill:u\\\\72 l(http://127.0.0.1:8765/remote.svg#paint)'/></svg>",
+        "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' style='fill:u\\72 l(http://127.0.0.1:8765/remote.svg#paint)'/></svg>",
         // Nested gzip-compressed (svgz) data: URI whose inner document references an external resource
         "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='16' height='16'><image xlink:href='data:image/svg+xml;base64,H4sIAAAAAAAC/23OwQrDIBAE0F/x5s217aWK8V+E2N2laiWRKP36Nin0lNvAPIZx64Zi5FTWSVJr1QL03lW/qdeCcNVaw1fIH7EjcXmewYsxBo5Wis5zo0nepaDISG2P3nEOGMVBLC3x8V+JI+SaouKyhcQz4FvVgucz4N1+x38AdK4P3LYAAAA=' width='16' height='16'/></svg>",
     };
